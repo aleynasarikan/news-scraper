@@ -48,11 +48,11 @@ Save this value, you'll need it for scraping the articles.
 ### Scraping 
 
 To scrape articles from your selected topic, run this command in your terminal:
-`make scrape TOPIC_ID=<your_selected_topic_id>`
+`make scrape TOPIC=<your_selected_topic_id>`
 
 With the `Business` topic ID selected before, the command should look like this:
 
-`make scrape TOPIC_ID=CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx6TVdZU0FtVnVHZ0pWVXlnQVAB`
+`make scrape TOPIC=CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx6TVdZU0FtVnVHZ0pWVXlnQVAB`
 
 After running the command, you should see this in your terminal:
 
@@ -64,6 +64,25 @@ If you open the generated CSV file, the data should look something like this:
 
 <img width="1277" alt="image" src="https://github.com/oxylabs/google-news-scraper/assets/44357929/7127198e-1aa9-468d-a6e6-b989a68085f3">
 
+Each article row includes the title, URL, source, publish time (ISO and relative), authors, and a thumbnail image URL when available.
+
+### Advanced usage
+
+For more control than `make scrape` offers, run the tool directly with `poetry run`:
+
+```bash
+poetry run python -m google_news_scraper \
+  --topic=CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx6TVdZU0FtVnVHZ0pWVXlnQVAB \
+  --topic=<another_topic_id> \
+  --format=json \
+  --output=news.json \
+  --limit=50
+```
+
+- `--topic` can be repeated to scrape several topics into a single combined output file.
+- `--output` / `-o` sets a custom output file path (defaults to `articles.csv` or `articles.json`).
+- `--format` chooses `csv` (default) or `json`.
+- `--limit` caps the total number of articles saved, across all requested topics.
 
 ### Notes
 

@@ -6,9 +6,12 @@ import logging
 import time
 
 from selenium import webdriver
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.wait import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 
 from google_news_scraper.conf import google_news_scraper_settings
@@ -44,11 +47,16 @@ class GoogleNewsCookieRetriever:
         """Retrieves consent cookie from Google with selenium Chrome webdriver"""
         driver.get(google_news_scraper_settings.url)
         try:
-            consent_button = driver.find_element(
-                By.XPATH,
-                self._consent_button_xpath,
+            consent_button = WebDriverWait(driver, 5).until(
+                EC.presence_of_element_located((By.XPATH, self._consent_button_xpath))
             )
             consent_button.click()
+        except TimeoutException:
+            self._logger.info(
+                "Consent screen not shown (likely a region that doesn't require "
+                "it). Proceeding without a consent cookie."
+            )
+            return None
         except Exception:
             self._logger.error(
                 "Unable to click Google consent button with selenium. Can't retrieve cookies."
